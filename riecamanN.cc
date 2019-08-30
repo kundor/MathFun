@@ -12,25 +12,41 @@ inline static void addsub(primesieve::iterator& pit, unsigned long& N, unsigned 
 }
 
 int main(int argc, char** argv) {
-    if (argc != 2) {
-        std::fputs("Exactly one argument required: initial value for N\n", stderr);
+    unsigned long i = 0, p = 1, startN, N;
+    primesieve::iterator it;
+    if (argc == 5) {
+        i = std::atol(argv[2]);
+        N = std::atol(argv[3]);
+        p = std::atol(argv[4]);
+        it.skipto(p);
+
+        if (N % 2) {
+            addsub(it, N, p);
+            ++i;
+        }
+        i /= 2;
+    } else if (argc != 2) {
+        std::fputs("Exactly one or four arguments required: initial value for N;\n"
+                   " if resuming, also <step> <last value> <last prime>.\n", stderr);
         std::exit(1);
     }
-    unsigned long i = 0, p = 1, startN, N;
-    N = startN = std::atol(argv[1]);
-    primesieve::iterator it;
-    bool isodd = N % 2;
 
-    if (!isodd) {
-        if (N == 0) {
-            printf("0 steps\n");
-            return 0;
+    startN = std::atol(argv[1]);
+    bool isodd = startN % 2;
+
+    if (argc == 2) {
+        N = startN;
+        if (!isodd) {
+            if (N == 0) {
+                printf("0 steps\n");
+                return 0;
+            }
+            if (N == 2) {
+                printf("1 step, last prime 2\n");
+                return 0;
+            }
+            addsub(it, N, p);
         }
-        if (N == 2) {
-            printf("1 step, last prime 2\n");
-            return 0;
-        }
-        addsub(it, N, p);
     }
 
     for (;;) {
