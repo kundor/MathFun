@@ -30,6 +30,7 @@ int main(int argc, char** argv) {
     }
 
     for (;;) {
+        /* N starts even (or n_0 odd) */
         p = it.next_prime();
         if (p > N) {
             N += p;
@@ -48,7 +49,7 @@ int main(int argc, char** argv) {
         /* Now N is even again */
         ++i;
         if (!(i & 0xFFFFFFFul)) {
-            printf("%lu. %lu: %lu\n", i, p, N);
+            printf("%lu. %lu: %lu\n", 2*i + !isodd, p, N);
         }
     }
     printf("%lu steps, last prime %lu\n", i, p);
