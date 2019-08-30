@@ -2,6 +2,15 @@
 #include <cstdlib>
 #include <primesieve.hpp>
 
+inline static void addsub(primesieve::iterator& pit, unsigned long& N, unsigned long& p) {
+    p = pit.next_prime();
+    if (p > N) {
+        N += p;
+    } else {
+        N -= p;
+    }
+}
+
 int main(int argc, char** argv) {
     if (argc != 2) {
         std::fputs("Exactly one argument required: initial value for N\n", stderr);
@@ -21,22 +30,12 @@ int main(int argc, char** argv) {
             printf("1 step, last prime 2\n");
             return 0;
         }
-        p = it.next_prime();
-        if (p > N) {
-            N += p;
-        } else {
-            N -= p;
-        }
+        addsub(it, N, p);
     }
 
     for (;;) {
         /* N starts even (or n_0 odd) */
-        p = it.next_prime();
-        if (p > N) {
-            N += p;
-        } else {
-            N -= p;
-        }
+        addsub(it, N, p);
         /* N is odd after adding/subtracting one prime */
         p = it.next_prime();
         if (p > N) {
