@@ -7,8 +7,8 @@ int main(int argc, char** argv) {
         std::fputs("Exactly one argument required: initial value for N\n", stderr);
         std::exit(1);
     }
-    unsigned long i = 0, p = 1, N;
-    N = std::atol(argv[1]);
+    unsigned long i = 0, p = 1, startN, N;
+    N = startN = std::atol(argv[1]);
     primesieve::iterator it;
     bool isodd = N % 2;
 
@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
             printf("%lu. %lu: %lu\n", 2*i + !isodd, p, N);
         }
     }
-    printf("%lu steps, last prime %lu\n", 2 + 2*i + !isodd, p);
+    printf("%lu: %lu steps, last prime %lu\n", startN, 2 + 2*i + !isodd, p);
     return 0;
 }
 
