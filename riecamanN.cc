@@ -52,7 +52,7 @@ int main(int argc, char** argv) {
             printf("%lu. %lu: %lu\n", 2*i + !isodd, p, N);
         }
     }
-    printf("%lu steps, last prime %lu\n", i, p);
+    printf("%lu steps, last prime %lu\n", 2 + 2*i + !isodd, p);
     return 0;
 }
 
