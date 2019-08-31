@@ -1,6 +1,9 @@
 #include <cstdio>
 #include <cstdlib>
+#include <csignal>
 #include <primesieve.hpp>
+
+static volatile std::sig_atomic_t interrupted = 0;
 
 inline static void addsub(primesieve::iterator& pit, unsigned long& N, unsigned long& p) {
     p = pit.next_prime();
@@ -9,6 +12,10 @@ inline static void addsub(primesieve::iterator& pit, unsigned long& N, unsigned 
     } else {
         N -= p;
     }
+}
+
+void signal_handler(int signal) {
+    interrupted = 1;
 }
 
 int main(int argc, char** argv) {
@@ -49,6 +56,9 @@ int main(int argc, char** argv) {
         }
     }
 
+    std::signal(SIGINT, signal_handler);
+    std::signal(SIGTERM, signal_handler);
+
     for (;;) {
         /* N starts even (or n_0 odd) */
         addsub(it, N, p);
@@ -63,8 +73,10 @@ int main(int argc, char** argv) {
         }
         /* Now N is even again */
         ++i;
-        if (!(i & 0xFFFFFFFul)) {
+        if (!(i & 0xFFFFFFFul) || interrupted) {
             printf("%lu. %lu: %lu\n", 2*i + !isodd, p, N);
+            if (interrupted)
+                return 1;
         }
     }
     printf("%lu: %lu steps, last prime %lu\n", startN, 2 + 2*i + !isodd, p);
