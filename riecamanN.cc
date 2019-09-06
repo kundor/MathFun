@@ -15,7 +15,7 @@ inline static void addsub(primesieve::iterator& pit, unsigned long& N, unsigned 
 }
 
 void signal_handler(int signal) {
-    interrupted = 1;
+    interrupted = signal;
 }
 
 int main(int argc, char** argv) {
@@ -58,6 +58,7 @@ int main(int argc, char** argv) {
 
     std::signal(SIGINT, signal_handler);
     std::signal(SIGTERM, signal_handler);
+    std::signal(SIGHUP, signal_handler);
 
     for (;;) {
         /* N starts even (or n_0 odd) */
@@ -73,10 +74,17 @@ int main(int argc, char** argv) {
         }
         /* Now N is even again */
         ++i;
-        if (!(i & 0xFFFFFFFul) || interrupted) {
+        if (!(i & 0xFFFFFFFFul)) {
             printf("%lu. %lu: %lu\n", 2*i + !isodd, p, N);
-            if (interrupted)
+        }
+        if (interrupted) {
+            printf("%lu: >%lu steps, last prime %lu, last value %lu\n", startN, 2*i + !isodd, p, N);
+            if (interrupted != SIGHUP)
                 return 1;
+            else {
+                interrupted = 0;
+                std::signal(SIGHUP, signal_handler);
+            }
         }
     }
     printf("%lu: %lu steps, last prime %lu\n", startN, 2 + 2*i + !isodd, p);
