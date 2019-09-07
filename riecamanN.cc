@@ -60,6 +60,7 @@ inline static void descent() {
 }
 
 int main(int argc, char** argv) {
+    setvbuf(stdout, NULL, _IOLBF, BUFSIZ);
     if (argc == 5) {
         steps = std::atol(argv[2]);
         N = std::atol(argv[3]);
