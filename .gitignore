@@ -1,5 +1,6 @@
 .*.swp
 .*.swo
-*
-!*.c
-!*.cc
+*.s
+riecamanN
+r-time
+signalme
