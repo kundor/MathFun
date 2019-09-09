@@ -1,0 +1,14 @@
+dc8420f: without even/odd: 8.446s for N=6 to step 536870912
+                           9.697s, 4.177s, 4.281s
+bf60620: with even/odd checking: 6.373s for N=6 to step 536870913
+                                 3.914s, 3.974s, 3.936s
+hand-unrolled: 4.481s for N=6 to step 536870913
+               4.453s, 4.773s
+(128 add/sub pairs, so that incrementing and testing i is only done every 256 steps)
+
+catching signals: 6.976s for N=6 to step 536870913
+                  3.434s, 3.415s, 3.442s
+
+compile no-pie: 3.333s for N=6 to step 536870913
+                3.388s, 3.349s, 3.364s
+Essentially no difference                
