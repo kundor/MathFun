@@ -24,7 +24,6 @@ def pathlength(G, v, rankseq):
             break
     return numsteps
 
-
 def isfullrank(G):
     """Are all vertices incident to one edge of each rank?"""
     maxrank = max(G.es["rank"])
@@ -74,22 +73,17 @@ def noadjrankseven(G):
     """
     #Actually, one or the other (or both) must take 1 or 3 steps
     D = max(G.es["rank"]) + 1
-    for v in G.vs:
-        oldeven = False
-        for i in range(1, D):
-            numsteps = 0
-            w = v.index
-            while True:
-                w = rankfollow(G, w, (i-1, i))
-                numsteps += 1
-                if w == v.index:
-                    break
+    oldeven = False
+    for i in range(1, D):
+        alleven = True
+        for v in G.vs:
+            numsteps = pathlength(G, v, (i-1,i))
             if numsteps in (1, 3):
-                oldeven = False
-            elif oldeven:
-                return False
-            else:
-                oldeven = True
+                alleven = False
+                break
+        if oldeven and alleven:
+            return False
+        oldeven = alleven
     return True
 
 def isvalidorbit(G):
