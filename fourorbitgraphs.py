@@ -7,26 +7,41 @@
 # so this doesn't happen.
 
 from orbitgraph import *
+from itertools import combinations
 
 def showedges(G):
     print('\n'.join(str((e.tuple, e['rank'])) for e in G.es))
 
-possible_irank_edgesets = [[],
-        [(0,1)],
-        [(0,1),(2,3)],
-        [(0,2)],
-        [(0,2),(1,3)],
-        [(0,3)],
-        [(0,3),(1,2)],
-        [(1,2)],
-        [(1,3)],
-        [(2,3)]]
+def alledgesets(verts):
+    curedges = [[]]
+    for pair in combinations(verts, 2):
+        remverts = verts - set(pair)
+        for edges in alledgesets(remverts):
+            curedges.append([pair] + edges)
+    return curedges
+
+
+def possedgesets(numorbit):
+    allsets = alledgesets(set(range(numorbit)))
+    poss_rank_edges = []
+    for es in allsets:
+        if sorted(es) in poss_rank_edges:
+            continue
+        poss_rank_edges.append(es)
+    return poss_rank_edges
+
+numorbit = 4
+
+possible_irank_edgesets = possedgesets(numorbit)
+# for four, [[], [(0,1)], [(0,1),(2,3)], [(0,2)], [(0,2),(1,3)], [(0,3)], [(0,3),(1,2)], [(1,2)], [(1,3)], [(2,3)]]
+
 all_graphs = []
+
 for zedges in possible_irank_edgesets:
     for oedges in possible_irank_edgesets:
         for tedges in possible_irank_edgesets:
             edgeranks = [0]*len(zedges) + [1]*len(oedges) + [2]*len(tedges)
-            G = igraph.Graph(4, zedges + oedges + tedges, edge_attrs={'rank': edgeranks})
+            G = igraph.Graph(numorbit, zedges + oedges + tedges, edge_attrs={'rank': edgeranks})
             addloops(G,3)
             all_graphs.append(G)
 
