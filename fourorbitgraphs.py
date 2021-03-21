@@ -36,8 +36,6 @@ discon_graphs = [g for g in all_graphs if not g.is_connected()]
 ztc_graphs = [g for g in con_graphs if twocommute(g)]
 nonztc_graphs = [g for g in con_graphs if not twocommute(g)]
 
-[(e.tuple, e['rank']) for e in G.es]
-
 isom_class_reps = []
 isom_class_nums = []
 for g in ztc_graphs:
