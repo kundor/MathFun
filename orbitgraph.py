@@ -13,6 +13,18 @@ def rankfollow(G, v, rankseq):
             v = a
     return v
 
+def pathlength(G, v, rankseq):
+    """How many steps to return to v, when following edges with the given ranks in order?"""
+    numsteps = 0
+    w = v.index
+    while True:
+        w = rankfollow(G, w, rankseq)
+        numsteps += 1
+        if w == v.index:
+            break
+    return numsteps
+
+
 def isfullrank(G):
     """Are all vertices incident to one edge of each rank?"""
     maxrank = max(G.es["rank"])
