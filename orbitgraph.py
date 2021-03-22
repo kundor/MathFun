@@ -105,6 +105,11 @@ def is_valid_orbit(G):
 
 def is_valid_tiling_orbit(G):
     """Is G an orbit graph for a tiling?"""
+# a more subtle version of intransitivity could be checked for
+# (the full tiling could be fully-transitive, but each facet and vertex figure
+# must not be).
+# But there could be a fully-transitive facet subgraph reflecting
+# a regular face which has less symmetry when embedded in the tiling.
     dim = max(G.es["rank"]) + 1
     return is_valid_orbit(G) and (dim == 3 or noadjrankseven(G))
 
@@ -238,10 +243,6 @@ def _orbit_graphs(numorbit, dim, convex=True):
         ok_graphs = [g for g in all_graphs if is_valid_convex_orbit(g)]
     else:
         ok_graphs = [g for g in all_graphs if is_valid_tiling_orbit(g)]
-    # (FIXME) actually adj_ranks_even applies also for tilings if dim != 3
-    # also probably a more subtle version of intransitivity applies
-    # (the full tiling could be fully-transitive, but each face and vertex figure
-    # must not be)
     return isomorphism_representatives(ok_graphs)
 
 def orbitgraphs(numorbits, dim, convex=True):
