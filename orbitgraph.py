@@ -211,7 +211,7 @@ def poss_edge_sets(numorbit):
 # e.g. for four:
 #[[], [(0,1)], [(0,1),(2,3)], [(0,2)], [(0,2),(1,3)], [(0,3)], [(0,3),(1,2)], [(1,2)], [(1,3)], [(2,3)]]
 
-def isomorphism_representatives(graphs, class_sizes = False):
+def isomorphism_representatives(graphs, class_sizes=False):
     """Given a list of orbit graphs, return one from each isomorphism class, and optionally the class sizes"""
     isom_class_reps = []
     isom_class_nums = []
@@ -227,7 +227,7 @@ def isomorphism_representatives(graphs, class_sizes = False):
         return isom_class_reps, isom_class_nums
     return isom_class_reps
 
-def _orbit_graphs(numorbit, dim, convex=True):
+def _orbit_graphs(numorbit, dim, is_valid=is_valid_orbit):
     """Generates all possible orbit graphs, throws out the bad ones, and finds isomorphism representatives."""
     possible_irank_edgesets = poss_edge_sets(numorbit)
     all_graphs = []
@@ -239,10 +239,7 @@ def _orbit_graphs(numorbit, dim, convex=True):
         G = igraph.Graph(numorbit, graph_edges, edge_attrs={'rank': edgeranks})
         addloops(G, dim)
         all_graphs.append(G)
-    if convex:
-        ok_graphs = [g for g in all_graphs if is_valid_convex_orbit(g)]
-    else:
-        ok_graphs = [g for g in all_graphs if is_valid_tiling_orbit(g)]
+    ok_graphs = [g for g in all_graphs if is_valid(g)]
     return isomorphism_representatives(ok_graphs)
 
 def orbitgraphs(numorbits, dim, convex=True):
@@ -261,7 +258,9 @@ def orbitgraphs(numorbits, dim, convex=True):
         return [threeorbitstring(dim, i) for i in range(dim-1)] + [threeorbitmulti(dim, i) for i in range(1, dim-1)]
         # string type can only be convex if i is 0 or dim-2, but the rest are valid as graphs
         # the other type can only be convex if i is 1 or dim - 2
-    return _orbit_graphs(numorbits, dim, convex)
+    if convex:
+        return _orbit_graphs(numorbits, dim, is_valid_convex_orbit)
+    return _orbit_graphs(numorbits, dim, is_valid_tiling_orbit)
 
 def dual(G):
     """Return the dual orbit graph to G"""
