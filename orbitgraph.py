@@ -25,10 +25,9 @@ def pathlength(G, v, rankseq):
             break
     return numsteps
 
-def isfullrank(G):
+def is_rank(G, rank):
     """Are all vertices incident to one edge of each rank?"""
-    maxrank = max(G.es["rank"])
-    D = maxrank + 1
+    D = rank + 1
     ranks = set(range(D))
     for v in G.vs:
         edges = set(G.incident(v))
@@ -37,6 +36,11 @@ def isfullrank(G):
         if set(G.es[e]["rank"] for e in edges) != ranks:
             return False
     return True
+
+def is_full_rank(G):
+    """Are all vertices incident to one edge of each rank?"""
+    maxrank = max(G.es["rank"])
+    return is_rank(G, maxrank)
 
 def twocommute(G):
     """
@@ -87,9 +91,9 @@ def noadjrankseven(G):
         oldeven = alleven
     return True
 
-def isvalidorbit(G):
-    """Is G an orbit graph for a convex polytope?"""
-    return G.is_connected() and isfullrank(G) and twocommute(G) and (G.vcount() == 1 or intransitive(G)) and noadjrankseven(G)
+def is_valid_orbit(G):
+    """Is G an orbit graph?"""
+    return G.is_connected() and is_full_rank(G) and twocommute(G)
 
 # Unlike the orbit graphs for convex polytopes, the graphs for tilings can be 
 # fully transitive (ie, there need not be any rank j so that the j-deleted graph
@@ -99,6 +103,14 @@ def isvalidorbit(G):
 # (Like {4,4}). In other ranks, 3-sections are always part of a convex polytope,
 # so this doesn't happen.
 
+def is_valid_tiling_orbit(G):
+    """Is G an orbit graph for a tiling?"""
+    dim = max(G.es["rank"]) + 1
+    return is_valid_orbit(G) and (dim == 3 or noadjrankseven(G))
+
+def is_valid_convex_orbit(G):
+    """Is G an orbit graph for a convex polytope?"""
+    return is_valid_orbit(G) and (G.vcount() == 1 or intransitive(G)) and noadjrankseven(G)
 
 def addloops(G, dim):
     """Add any missing loops to make G a dim-dimensional orbit graph."""
@@ -223,9 +235,9 @@ def _orbit_graphs(numorbit, dim, convex=True):
         addloops(G, dim)
         all_graphs.append(G)
     if convex:
-        ok_graphs = [g for g in all_graphs if isvalidorbit(g)]
+        ok_graphs = [g for g in all_graphs if is_valid_convex_orbit(g)]
     else:
-        ok_graphs = [g for g in all_graphs if g.is_connected() and twocommute(g)]
+        ok_graphs = [g for g in all_graphs if is_valid_tiling_orbit(g)]
     # (FIXME) actually adj_ranks_even applies also for tilings if dim != 3
     # also probably a more subtle version of intransitivity applies
     # (the full tiling could be fully-transitive, but each face and vertex figure
