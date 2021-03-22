@@ -7,7 +7,7 @@
 # so this doesn't happen.
 
 from orbitgraph import *
-from itertools import combinations
+from itertools import combinations, product
 
 def showedges(G):
     print('\n'.join(str((e.tuple, e['rank'])) for e in G.es))
@@ -31,6 +31,7 @@ def possedgesets(numorbit):
     return poss_rank_edges
 
 numorbit = 4
+dim = 3
 
 possible_irank_edgesets = possedgesets(numorbit)
 # e.g. for four:
@@ -38,13 +39,14 @@ possible_irank_edgesets = possedgesets(numorbit)
 
 all_graphs = []
 
-for zedges in possible_irank_edgesets:
-    for oedges in possible_irank_edgesets:
-        for tedges in possible_irank_edgesets:
-            edgeranks = [0]*len(zedges) + [1]*len(oedges) + [2]*len(tedges)
-            G = igraph.Graph(numorbit, zedges + oedges + tedges, edge_attrs={'rank': edgeranks})
-            addloops(G,3)
-            all_graphs.append(G)
+for rankedges in product(possible_irank_edgesets, repeat=dim):
+    edgeranks = []
+    for rank, edges in enumerate(rankedges):
+        edgeranks += [rank] * len(edges)
+    graph_edges = sum(rankedges, [])
+    G = igraph.Graph(numorbit, graph_edges, edge_attrs={'rank': edgeranks})
+    addloops(G, dim)
+    all_graphs.append(G)
 
 con_graphs = [g for g in all_graphs if g.is_connected()]
 discon_graphs = [g for g in all_graphs if not g.is_connected()]
