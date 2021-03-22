@@ -1,4 +1,5 @@
 import igraph
+from itertools import combinations, product
 
 def rankfollow(G, v, rankseq):
     """Follow the edges of given ranks in order from v, returning the vertex reached"""
@@ -162,23 +163,81 @@ def covers(G, K):
         return True
     raise NotImplementedError('Whoops')
 
-def orbitgraphs(numorbits, dim):
+def _poss_edge_sets(verts):
+    """Recursively lists possible non-incident edges among the given vertices.
+       Internal for poss_edge_sets."""
+    curedges = [[]]
+    for pair in combinations(verts, 2):
+        remverts = verts - set(pair)
+        for edges in _poss_edge_sets(remverts):
+            curedges.append([pair] + edges)
+    return curedges
+
+def poss_edge_sets(numorbit):
+    """All possible sets of non-incident edges among numorbit vertices."""
+    allsets = _poss_edge_sets(set(range(numorbit)))
+    poss_rank_edges = []
+    for es in allsets:
+        if sorted(es) in poss_rank_edges:
+            continue
+        poss_rank_edges.append(es)
+    return poss_rank_edges
+
+def isomorphism_representatives(graphs, class_sizes = False):
+    """Given a list of orbit graphs, return one from each isomorphism class, and optionally the class sizes"""
+    isom_class_reps = []
+    isom_class_nums = []
+    for g in graphs:
+        for i,k in enumerate(isom_class_reps):
+            if isomorphicorbits(g, k):
+                isom_class_nums[i] += 1
+                break
+        else:
+            isom_class_reps.append(g)
+            isom_class_nums.append(1)
+    if class_sizes:
+        return isom_class_reps, isom_class_nums
+    return isom_class_reps
+
+def _orbit_graphs(numorbit, dim, convex=True):
+    """Generates all possible orbit graphs, throws out the bad ones, and finds isomorphism representatives."""
+    possible_irank_edgesets = poss_edge_sets(numorbit)
+    all_graphs = []
+    for rankedges in product(possible_irank_edgesets, repeat=dim):
+        edgeranks = []
+        for rank, edges in enumerate(rankedges):
+            edgeranks += [rank] * len(edges)
+        graph_edges = sum(rankedges, [])
+        G = igraph.Graph(numorbit, graph_edges, edge_attrs={'rank': edgeranks})
+        addloops(G, dim)
+        all_graphs.append(G)
+    if convex:
+        ok_graphs = [g for g in all_graphs if isvalidorbit(g)]
+    else:
+        ok_graphs = [g for g in all_graphs if g.is_connected() and twocommute(g)]
+    # (FIXME) actually adj_ranks_even applies also for tilings if dim != 3
+    # also probably a more subtle version of intransitivity applies
+    # (the full tiling could be fully-transitive, but each face and vertex figure
+    # must not be)
+    return isomorphism_representatives(ok_graphs)
+
+def orbitgraphs(numorbits, dim, convex=True):
     """Return a list of all valid k-orbit graphs for d-dimensional convex polytopes."""
     if numorbits < 1 or dim < 0 or (dim < 1 and numorbits > 1) or (dim < 2 and numorbits > 2):
         return []
     if numorbits == 1:
-        return [regpoly(dim)]
-    if numorbits == 2:
+        return [oneorbit(dim)]
+    if numorbits == 2 and convex:
         if dim > 1:
             return [twoorbit(dim, 0), twoorbit(dim, dim-1)]
         return [twoorbit(dim, 0)]
         # no convex two-orbit polytopes exist except in dimensions two or three
         # but the orbit graphs are valid...and could appear as subgraphs
-    if numorbits == 3:
+    if numorbits == 3 and convex:
         return [threeorbitstring(dim, i) for i in range(dim-1)] + [threeorbitmulti(dim, i) for i in range(1, dim-1)]
         # string type can only be convex if i is 0 or dim-2, but the rest are valid as graphs
         # the other type can only be convex if i is 1 or dim - 2
-    raise NotImplementedError
+    return _orbit_graphs(numorbits, dim, convex)
 
 def dual(G):
     """Return the dual orbit graph to G"""
@@ -232,4 +291,17 @@ def contractions(G, l, j):
         X.delete_edges(edgetodel)
         sections.append(X)
     return sections
+
+def showedges(G):
+    print('\n'.join(str((e.tuple, e['rank'])) for e in G.es))
+
+if __name__ == '__main__':
+    import sys
+    if len(sys.argv) != 3:
+        sys.exit('Two arguments: dimension and number of orbits')
+    dim = int(sys.argv[1])
+    numorbit = int(sys.argv[2])
+    for G in orbitgraphs(numorbit, dim, False):
+        showedges(G)
+        print()
 
