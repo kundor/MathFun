@@ -91,6 +91,15 @@ def isvalidorbit(G):
     """Is G an orbit graph for a convex polytope?"""
     return G.is_connected() and isfullrank(G) and twocommute(G) and (G.vcount() == 1 or intransitive(G)) and noadjrankseven(G)
 
+# Unlike the orbit graphs for convex polytopes, the graphs for tilings can be 
+# fully transitive (ie, there need not be any rank j so that the j-deleted graph
+# is disconnected.)
+# Also, for rank 3 specifically, the evenness condition does not apply:
+# a rank 3 tiling (a tiling of the plane) can be both (0,1)-even and (1,2)-even
+# (Like {4,4}). In other ranks, 3-sections are always part of a convex polytope,
+# so this doesn't happen.
+
+
 def addloops(G, dim):
     """Add any missing loops to make G a dim-dimensional orbit graph."""
     ranks = set(range(dim))
@@ -182,6 +191,8 @@ def poss_edge_sets(numorbit):
             continue
         poss_rank_edges.append(es)
     return poss_rank_edges
+# e.g. for four:
+#[[], [(0,1)], [(0,1),(2,3)], [(0,2)], [(0,2),(1,3)], [(0,3)], [(0,3),(1,2)], [(1,2)], [(1,3)], [(2,3)]]
 
 def isomorphism_representatives(graphs, class_sizes = False):
     """Given a list of orbit graphs, return one from each isomorphism class, and optionally the class sizes"""
