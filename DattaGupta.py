@@ -41,7 +41,7 @@ def dg_ok(seq):
     return angle_sum(seq) > 2 and dg_cond_a(seq) and dg_cond_b(seq)
 
 # e.g. all valid types of degree 4 with polygon sizes up to 7 
-[z for z in itertools.product(range(4,8), repeat=4) if dg_ok(z)]
+s4 = [z for z in itertools.product(range(4,8), repeat=4) if dg_ok(z)]
 
 def ok_seqs(n):
     """All ok sequences of length n, removing cyclic repetitions"""
