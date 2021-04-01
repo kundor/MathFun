@@ -324,7 +324,7 @@ if __name__ == '__main__':
         sys.exit('Two arguments: dimension and number of orbits')
     dim = int(sys.argv[1])
     numorbit = int(sys.argv[2])
-    for G in orbitgraphs(numorbit, dim, False):
+    for G in orbitgraphs(numorbit, dim):
         showedges(G)
         print()
 
