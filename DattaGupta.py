@@ -65,4 +65,16 @@ def vtype(seq):
 def ok_vtypes(n):
     return {''.join(vtype(s)) for s in ok_seqs(n)}
 
-
+# The condition in the published version of the paper is different
+# old (A) is removed; (B) is the same except that xy "appears" now means
+# either xy or yx appears.
+def dg_newa(seq):
+    n = len(seq)
+    rot = seq[1:] + seq[:1]
+    twoples = set(zip(seq, rot)) | set(zip(rot,seq))
+    for x,y in twoples:
+        for w,z in twoples:
+            if y == w:
+                if not (is_sublist((x,y,z), seq) or is_sublist((z,y,x), seq)):
+                    return False
+    return True
