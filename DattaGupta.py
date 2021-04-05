@@ -43,10 +43,10 @@ def dg_ok(seq):
 # e.g. all valid types of degree 4 with polygon sizes up to 7 
 s4 = [z for z in itertools.product(range(4,8), repeat=4) if dg_ok(z)]
 
-def ok_seqs(n):
+def ok_seqs(n, is_ok=dg_ok):
     """All ok sequences of length n, removing cyclic repetitions"""
     top = max(5, 4 + n//2)
-    seqs = [z for z in itertools.product(range(4,top), repeat=n) if dg_ok(z)]
+    seqs = [z for z in itertools.product(range(4,top), repeat=n) if is_ok(z)]
     uniqs = []
     for s in seqs:
         for u in uniqs:
@@ -62,8 +62,8 @@ def vtype(seq):
     reps = {e : chr(i) for i,e in enumerate(elts, start=ord('a'))}
     return [reps[n] for n in seq]
 
-def ok_vtypes(n):
-    return {''.join(vtype(s)) for s in ok_seqs(n)}
+def ok_vtypes(n, is_ok=dg_ok):
+    return {''.join(vtype(s)) for s in ok_seqs(n, is_ok)}
 
 # The condition in the published version of the paper is different
 # old (A) is removed; (B) is the same except that xy "appears" now means
@@ -71,10 +71,14 @@ def ok_vtypes(n):
 def dg_newa(seq):
     n = len(seq)
     rot = seq[1:] + seq[:1]
-    twoples = set(zip(seq, rot)) | set(zip(rot,seq))
+    twoples = set(zip(seq, rot)) | set(zip(rot, seq))
     for x,y in twoples:
         for w,z in twoples:
             if y == w:
                 if not (is_sublist((x,y,z), seq) or is_sublist((z,y,x), seq)):
                     return False
     return True
+
+def dg_newok(seq):
+    return angle_sum(seq) > 2 and dg_newa(seq)
+
