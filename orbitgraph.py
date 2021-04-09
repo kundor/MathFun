@@ -71,12 +71,12 @@ def intransitive(G):
             return True
     return False
 
-def noadjrankseven(G):
+def noadjranksnot3(G):
     """
     If at any vertex v it takes evenly many steps alternating i,i+1 edges to return,
     and evenly many steps alternating i-1,i edges, then G cannot be convex.
+    In fact, one or the other (or both) must take 1 or 3 steps.
     """
-    #Actually, one or the other (or both) must take 1 or 3 steps
     D = max(G.es["rank"]) + 1
     oldeven = False
     for i in range(1, D):
@@ -111,11 +111,11 @@ def is_valid_tiling_orbit(G):
 # But there could be a fully-transitive facet subgraph reflecting
 # a regular face which has less symmetry when embedded in the tiling.
     dim = max(G.es["rank"]) + 1
-    return is_valid_orbit(G) and (dim == 3 or noadjrankseven(G))
+    return is_valid_orbit(G) and (dim == 3 or noadjranksnot3(G))
 
 def is_valid_convex_orbit(G):
     """Is G an orbit graph for a convex polytope?"""
-    return is_valid_orbit(G) and (G.vcount() == 1 or intransitive(G)) and noadjrankseven(G)
+    return is_valid_orbit(G) and (G.vcount() == 1 or intransitive(G)) and noadjranksnot3(G)
 
 def addloops(G, dim):
     """Add any missing loops to make G a dim-dimensional orbit graph."""
