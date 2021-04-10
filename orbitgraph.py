@@ -383,13 +383,25 @@ def showedges(G):
                 msgs.append(f'{rank}: {target}')
         print(', '.join(msgs))
 
+def report_by_type(orbits, dim, is_valid=is_valid_convex_orbit):
+    paths, trees, others = partition_graphs(_orbit_graphs(orbits, dim, is_valid))
+    for g in paths:
+        showpath(g)
+        print()
+    for t in trees:
+        showedges(t)
+        print()
+    for g in others:
+        showedges(g)
+        print()
+
 if __name__ == '__main__':
     import sys
     if len(sys.argv) != 3:
         sys.exit('Two arguments: dimension and number of orbits')
     dim = int(sys.argv[1])
     numorbit = int(sys.argv[2])
-    for G in orbitgraphs(numorbit, dim):
-        showedges(G)
-        print()
-
+    print('Orbit graphs for convex polytopes')
+    report_by_type(numorbit, dim)
+    print('Other orbit graphs for tilings')
+    report_by_type(numorbit, dim, is_valid_tiling_only)
