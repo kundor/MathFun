@@ -329,12 +329,11 @@ def underlying_simple_graph(G):
     edges = {(min(e.tuple),max(e.tuple)) for e in G.es if e.source != e.target}
     return igraph.Graph(G.vcount(), edges)
 
-def is_path(G):
-    degrees = G.degree()
-    return G.is_connected() and G.is_simple() and min(degrees) <= 1 and max(degrees) <= 2
-
 def is_tree(G):
     return G.is_connected() and G.is_simple() and G.ecount() == G.vcount() - 1
+
+def is_path(G):
+    return is_tree(G) and G.maxdegree() <= 2
 
 def showedges(G):
     D = max(G.es["rank"]) + 1
