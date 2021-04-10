@@ -37,8 +37,13 @@ def is_rank(G, rank):
             return False
     return True
 
+def rank_deleted_components(G, ranks):
+    """Return the connected components of G after removing all edges with labels in ranks"""
+    K = G.es(rank_notin=ranks).subgraph(delete_vertices=False)
+    return K.components().subgraphs()
+
 def is_full_rank(G):
-    """Are all vertices incident to one edge of each rank?"""
+    """Are all vertices incident to one edge of the same ranks?"""
     maxrank = max(G.es["rank"])
     return is_rank(G, maxrank)
 
@@ -66,10 +71,17 @@ def intransitive(G):
     """
     D = max(G.es["rank"]) + 1
     for k in range(D):
-        K = G.es(rank_ne = k).subgraph(delete_vertices=False)
-        if len(K.components()) > 1:
+        if len(rank_deleted_components(G, {k})) > 1:
             return True
     return False
+
+def is_even(G, i):
+    """Is every (i,i+1)-walk even?"""
+    return all(pathlength(G, v, (i,i+1)) % 2 == 0 for v in G.vs)
+
+def is_not3(G, i):
+    """Is every (i,i+1)-walk either even or greater than 4?"""
+    return all(pathlength(G, v, (i,i+1)) not in (1,3) for v in G.vs)
 
 def noadjranksnot3(G):
     """
@@ -77,15 +89,10 @@ def noadjranksnot3(G):
     and evenly many steps alternating i-1,i edges, then G cannot be convex.
     In fact, one or the other (or both) must take 1 or 3 steps.
     """
-    D = max(G.es["rank"]) + 1
+    D = max(G.es["rank"])
     oldeven = False
-    for i in range(1, D):
-        alleven = True
-        for v in G.vs:
-            numsteps = pathlength(G, v, (i-1,i))
-            if numsteps in (1, 3):
-                alleven = False
-                break
+    for i in range(D):
+        alleven = is_not3(G, i)
         if oldeven and alleven:
             return False
         oldeven = alleven
@@ -275,8 +282,7 @@ def restrictions(G, l, j):
     if j >= l:
         return []
     sections = []
-    G_jl = G.es(rank_notin=(j, l)).subgraph()
-    for X in G_jl.components().subgraphs():
+    for X in rank_deleted_components(G, (j,l)):
         K = X.es(rank_in=range(j+1,l)).subgraph()
         kcomps = K.components().subgraphs()
         K0 = kcomps[0]
@@ -296,8 +302,7 @@ def contractions(G, l, j):
     if j >= l:
         return []
     sections = []
-    G_jl = G.es(rank_notin=(j,l)).subgraph()
-    for X in G_jl.components().subgraphs():
+    for X in rank_deleted_components(G, (j,l)):
         clusters = X.es(rank_notin=range(j+1,l)).subgraph(delete_vertices=False).components()
         X.contract_vertices(clusters.membership)
         X.delete_edges(rank_notin=range(j+1,l))
@@ -314,6 +319,10 @@ def contractions(G, l, j):
         X.delete_edges(edgetodel)
         sections.append(X)
     return sections
+
+def underlying_simple_graph(G):
+    edges = {e.tuple for e in G.es if e.source < e.target}
+    return igraph.Graph(G.vcount(), edges)
 
 def showedges(G):
     print('\n'.join(str((e.tuple, e['rank'])) for e in G.es))
