@@ -329,7 +329,20 @@ def underlying_simple_graph(G):
     return igraph.Graph(G.vcount(), edges)
 
 def showedges(G):
-    print('\n'.join(str((e.tuple, e['rank'])) for e in G.es))
+    D = max(G.es["rank"]) + 1
+    for v in G.vs:
+        print(f'{v.index}: ', end=' ')
+        edges = set(G.incident(v))
+        msgs = []
+        for rank in range(D):
+            e = G.es(rank=rank,_from=v)[0]
+            if e.source == e.target:
+                msgs.append(f'{rank}: ↻')
+            elif e.source_vertex == v:
+                msgs.append(f'{rank}: {e.target}')
+            else:
+                msgs.append(f'{rank}: {e.source}')
+        print(', '.join(msgs))
 
 if __name__ == '__main__':
     import sys
