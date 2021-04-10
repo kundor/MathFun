@@ -354,13 +354,13 @@ def partition_graphs(graphs):
     return paths, trees, graphs
 
 def showpath(G):
-    pathstr = '*'
+    pathstr = '●'
     ug = underlying_simple_graph(G)
     path = ug.get_diameter()
     for i in range(len(path)-1):
         ranks = G.es(_between=([path[i]],[path[i+1]]))["rank"]
         ranks.sort()
-        pathstr += '-' + ','.join(str(r) for r in ranks) + '-*'
+        pathstr += '-' + ','.join(str(r) for r in ranks) + '-●'
     print(pathstr)
 
 def showedges(G):
