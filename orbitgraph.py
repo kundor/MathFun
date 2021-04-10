@@ -335,6 +335,24 @@ def is_tree(G):
 def is_path(G):
     return is_tree(G) and G.maxdegree() <= 2
 
+def partition_graphs(graphs):
+    """
+    Return three lists:
+    - graphs whose underlying simple graph is a path,
+    - graphs which are trees (but not paths),
+    - and others.
+    Note: the input list is modified.
+    """
+    paths = []
+    trees = []
+    for i in range(len(graphs)-1, -1, 0)):
+        ug = underlying_simple_graph(graphs[i])
+        if is_path(ug):
+            paths.append(graphs.pop(i))
+        elif is_tree(ug):
+            trees.append(graphs.pop(i))
+    return paths, trees, graphs
+
 def showedges(G):
     D = max(G.es["rank"]) + 1
     for v in G.vs:
