@@ -326,7 +326,7 @@ def contractions(G, l, j):
     return sections
 
 def underlying_simple_graph(G):
-    edges = {e.tuple for e in G.es if e.source < e.target}
+    edges = {(min(e.tuple),max(e.tuple)) for e in G.es if e.source != e.target}
     return igraph.Graph(G.vcount(), edges)
 
 def showedges(G):
