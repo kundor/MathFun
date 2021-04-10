@@ -345,7 +345,7 @@ def partition_graphs(graphs):
     """
     paths = []
     trees = []
-    for i in range(len(graphs)-1, -1, 0)):
+    for i in range(len(graphs)-1, -1, -1):
         ug = underlying_simple_graph(graphs[i])
         if is_path(ug):
             paths.append(graphs.pop(i))
