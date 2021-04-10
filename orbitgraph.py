@@ -388,9 +388,13 @@ def report_by_type(orbits, dim, is_valid=is_valid_convex_orbit):
     for g in paths:
         showpath(g)
         print()
+    if trees:
+        print('Trees')
     for t in trees:
         showedges(t)
         print()
+    if others:
+        print('Cyclic')
     for g in others:
         showedges(g)
         print()
