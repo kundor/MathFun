@@ -1,5 +1,6 @@
 import igraph
 from itertools import combinations, product
+from colorama import Style
 
 def rankfollow(G, v, rankseq):
     """Follow the edges of given ranks in order from v, returning the vertex reached"""
@@ -336,12 +337,16 @@ def showedges(G):
         msgs = []
         for rank in range(D):
             e = G.es(rank=rank,_from=v)[0]
-            if e.source == e.target:
-                msgs.append(f'{rank}: ↻')
-            elif e.source_vertex == v:
-                msgs.append(f'{rank}: {e.target}')
+            if e.source_vertex == v:
+                target = e.target
             else:
-                msgs.append(f'{rank}: {e.source}')
+                target = e.source
+            if target <= v.index:
+                if target == v.index:
+                    target = '↻'
+                msgs.append(Style.DIM + f'{rank}: {target}' + Style.RESET_ALL)
+            else:
+                msgs.append(f'{rank}: {target}')
         print(', '.join(msgs))
 
 if __name__ == '__main__':
