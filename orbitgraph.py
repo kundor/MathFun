@@ -124,6 +124,10 @@ def is_valid_convex_orbit(G):
     """Is G an orbit graph for a convex polytope?"""
     return is_valid_orbit(G) and (G.vcount() == 1 or intransitive(G)) and noadjranksnot3(G)
 
+def is_valid_tiling_only(G):
+    """Is G a possible orbit graph for a tiling but not a convex polytope?"""
+    return is_valid_tiling_orbit(G) and not is_valid_convex_orbit(G)
+
 def addloops(G, dim):
     """Add any missing loops to make G a dim-dimensional orbit graph."""
     ranks = set(range(dim))
