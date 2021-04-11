@@ -335,23 +335,31 @@ def is_tree(G):
 def is_path(G):
     return is_tree(G) and G.maxdegree() <= 2
 
+def is_cycle(G):
+    degs = G.degree()
+    return G.is_connected() and G.is_simple() and min(degs) == max(degs) == 2
+
 def partition_graphs(graphs):
     """
-    Return three lists:
+    Return four lists:
     - graphs whose underlying simple graph is a path,
     - graphs which are trees (but not paths),
+    - cycles
     - and others.
     Note: the input list is modified.
     """
     paths = []
     trees = []
+    cycles = []
     for i in range(len(graphs)-1, -1, -1):
         ug = underlying_simple_graph(graphs[i])
         if is_path(ug):
             paths.append(graphs.pop(i))
         elif is_tree(ug):
             trees.append(graphs.pop(i))
-    return paths, trees, graphs
+        elif is_cycle(ug):
+            cycles.append(graphs.pop(i))
+    return paths, trees, cycles, graphs
 
 def showpath(G):
     pathstr = '●'
@@ -384,7 +392,7 @@ def showedges(G):
         print(', '.join(msgs))
 
 def report_by_type(orbits, dim, is_valid=is_valid_convex_orbit):
-    paths, trees, others = partition_graphs(_orbit_graphs(orbits, dim, is_valid))
+    paths, trees, cycles, others = partition_graphs(_orbit_graphs(orbits, dim, is_valid))
     if paths:
         print(f'Paths: {len(paths)}')
     for g in paths:
@@ -395,8 +403,13 @@ def report_by_type(orbits, dim, is_valid=is_valid_convex_orbit):
     for t in trees:
         showedges(t)
         print()
+    if cycles:
+        print(f'Cycles: {len(cycles)}')
+    for g in cycles:
+        showedges(g)
+        print()
     if others:
-        print(f'Cyclic: {len(others)}')
+        print(f'Other cyclic: {len(others)}')
     for g in others:
         showedges(g)
         print()
