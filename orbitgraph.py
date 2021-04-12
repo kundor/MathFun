@@ -371,6 +371,23 @@ def showpath(G):
         pathstr += '-' + ','.join(str(r) for r in ranks) + '-●'
     print(pathstr)
 
+def showcycle(G):
+    pathstr = '⮎'
+    ug = underlying_simple_graph(G)
+    beg,end = ug.es[0].tuple
+    paths = ug.get_all_simple_paths(beg, end)
+    if len(paths[0]) < len(paths[1]):
+        path = paths[1]
+    else:
+        path = paths[0]
+    path.append(path[0])
+    for i in range(len(path)-1):
+        ranks = G.es(_between=([path[i]],[path[i+1]]))["rank"]
+        ranks.sort()
+        pathstr += '-' + ','.join(str(r) for r in ranks) + '-●'
+    pathstr = pathstr[:-1] + '⮌'
+    print(pathstr)
+
 def showedges(G):
     D = max(G.es["rank"]) + 1
     for v in G.vs:
@@ -406,7 +423,7 @@ def report_by_type(orbits, dim, is_valid=is_valid_convex_orbit):
     if cycles:
         print(f'Cycles: {len(cycles)}')
     for g in cycles:
-        showedges(g)
+        showcycle(g)
         print()
     if others:
         print(f'Other cyclic: {len(others)}')
