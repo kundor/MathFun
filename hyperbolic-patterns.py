@@ -47,6 +47,8 @@ RotateP = ReflectEdgeBisector @ ReflectHypotenuse
 RotateQ = ReflectHypotenuse @ ReflectPgonEdge
 RotateEdge = ReflectPgonEdge @ ReflectEdgeBisector
 
+Identity = np.eye(3)
+
 def DrawPgonPattern(T):
     for x, y, action in zip(X, Y, Action):
         if isinstance(action, (str, tuple, list)):
