@@ -19,9 +19,11 @@ bool firstn(int n, int q) {
     }
     return true;
 }
+/* With vector, up to n=16, at -O3: 3.93 s */
 
 int main() {
-    int n, q;
+    int n;
+    long long q;
     for (n = 1; n < 23; ++n) {
         for (q = n + 1; !firstn(n, q); ++q);
         std::printf("%2i: %i\n", n, q);
