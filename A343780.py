@@ -7,9 +7,9 @@ def savesfirstn(n, q):
         i = (i + q - 1) % len(circle)
         if circle[i] < n:
             return False
-        circle.pop(i)
+        del circle[i]
     return True
-for n in range(1,22):
+for n in range(1, 22):
     q = n + 1
     while not savesfirstn(n, q):
         q += 1
