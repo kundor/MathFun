@@ -25,7 +25,7 @@ int main() {
     int n;
     long q;
     for (n = 1; n < 23; ++n) {
-        for (q = n + 1; !firstn(n, q); ++q);
+        for (q = n + 1; !firstn(n, q); ++q) /* NOP */;
         std::printf("%2i: %li\n", n, q);
     }
     return 0;
