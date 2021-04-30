@@ -6,7 +6,7 @@
 #include <vector>
 #include <numeric>
 
-#define MAXN 16
+#define MAXN 22
 
 std::vector<int> circle(2*MAXN);
 
@@ -24,7 +24,7 @@ bool firstn(int n, long q) {
     return true;
 }
 /* With vector, up to n=16, at -O3: 3.93 s */
-/* reusing global vector, up to n=16, at -03: 3.63 s */
+/* reusing global vector, up to n=16, at -O3: 3.63 s */
 
 int main() {
     int n;
