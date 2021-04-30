@@ -6,9 +6,13 @@
 #include <vector>
 #include <numeric>
 
+#define MAXN 16
+
+std::vector<int> circle(2*MAXN);
+
 bool firstn(int n, long q) {
     int i = 0, size = 2*n;
-    std::vector<int> circle(2*n);
+    circle.resize(2*n);
     std::iota(circle.begin(), circle.end(), 1); // fill 1...2n
     while (size > n) {
         i = (i + q - 1) % size;
@@ -20,11 +24,12 @@ bool firstn(int n, long q) {
     return true;
 }
 /* With vector, up to n=16, at -O3: 3.93 s */
+/* reusing global vector, up to n=16, at -03: 3.63 s */
 
 int main() {
     int n;
     long q;
-    for (n = 1; n < 23; ++n) {
+    for (n = 1; n <= MAXN; ++n) {
         for (q = n + 1; !firstn(n, q); ++q) /* NOP */;
         std::printf("%2i: %li\n", n, q);
     }
