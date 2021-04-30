@@ -13,4 +13,4 @@ for n in range(1,22):
     q = n + 1
     while not savesfirstn(n, q):
         q += 1
-    print(f'{n} {q}')
+    print(n, q)
