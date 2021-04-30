@@ -6,7 +6,7 @@
 #include <vector>
 #include <numeric>
 
-bool firstn(int n, int q) {
+bool firstn(int n, long q) {
     int i = 0, size = 2*n;
     std::vector<int> circle(2*n);
     std::iota(circle.begin(), circle.end(), 1); // fill 1...2n
@@ -23,10 +23,10 @@ bool firstn(int n, int q) {
 
 int main() {
     int n;
-    long long q;
+    long q;
     for (n = 1; n < 23; ++n) {
         for (q = n + 1; !firstn(n, q); ++q);
-        std::printf("%2i: %i\n", n, q);
+        std::printf("%2i: %li\n", n, q);
     }
     return 0;
 }
