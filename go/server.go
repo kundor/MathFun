@@ -1,19 +1,19 @@
-// Server is a minimal echo and counter server.
+// Server is a server for some mathematical image creators.
 package main
 
 import (
 	"fmt"
 	"log"
-    "math"
+	"math"
 	"net/http"
-    "os/exec"
+	"os/exec"
 	"path"
+	"strconv"
 	"strings"
-    "strconv"
 	"sync"
 
+	"fractal"
 	"lissajous"
-    "fractal"
 	"surface"
 )
 
@@ -134,7 +134,7 @@ func lisser(w http.ResponseWriter, r *http.Request) {
 			params[key] = val
 		}
 	}
-    log.Printf("method %q, values %v\n", r.Method, params)
+	log.Printf("method %q, values %v\n", r.Method, params)
 	lissajous.ParseMap(params)
 	lissajous.Lissajous(w)
 }
@@ -150,7 +150,7 @@ func surfer(w http.ResponseWriter, r *http.Request) {
 	}
 	switch strings.ToLower(query) {
 	default:
-        // Still Sinrdr
+		// Still Sinrdr
 	case "moguls":
 		surfunc = surface.Moguls
 	case "eggbox":
@@ -158,69 +158,68 @@ func surfer(w http.ResponseWriter, r *http.Request) {
 	case "saddle":
 		surfunc = surface.Saddle
 	}
-    expr := r.FormValue("func")
-    log.Printf("Requested func %s\n", expr)
-    if expr != "" {
-        cmd := exec.Command("bc", "-ql")
-        stdin, _ := cmd.StdinPipe()
-        stdout, _ := cmd.StdoutPipe()
-        cmd.Start()
-        surfunc = func(x, y float64) (val float64) {
-            if math.Abs(x) < thresh {
-                if x < 0 {
-                    x = -thresh
-                } else {
-                    x = thresh
-                }
-            }
-            r := math.Hypot(x, y)
-            t := math.Atan2(y, x)
-            fmt.Fprintf(stdin, "x=%f;y=%f;r=%f;t=%f;%s\n", x, y, r, t, expr)
-            fmt.Fscanln(stdout, &val)
-            return
-        }
-        //defer cmd.Process.Kill()
-        defer cmd.Wait()
-        defer stdin.Close()
-    }
+	expr := r.FormValue("func")
+	log.Printf("Requested func %s\n", expr)
+	if expr != "" {
+		cmd := exec.Command("bc", "-ql")
+		stdin, _ := cmd.StdinPipe()
+		stdout, _ := cmd.StdoutPipe()
+		cmd.Start()
+		surfunc = func(x, y float64) (val float64) {
+			if math.Abs(x) < thresh {
+				if x < 0 {
+					x = -thresh
+				} else {
+					x = thresh
+				}
+			}
+			r := math.Hypot(x, y)
+			t := math.Atan2(y, x)
+			fmt.Fprintf(stdin, "x=%f;y=%f;r=%f;t=%f;%s\n", x, y, r, t, expr)
+			fmt.Fscanln(stdout, &val)
+			return
+		}
+		//defer cmd.Process.Kill()
+		defer cmd.Wait()
+		defer stdin.Close()
+	}
 	surface.WriteSVG(w, surfunc)
 }
 
 func mander(w http.ResponseWriter, r *http.Request) {
-    countme("mandelbrot", r)
-    fractal.WritePNG(w, fractal.Mandelbrot)
+	countme("mandelbrot", r)
+	fractal.WritePNG(w, fractal.Mandelbrot)
 }
 
 func uniter(w http.ResponseWriter, r *http.Request) {
-    countme("unity", r)
+	countme("unity", r)
 	base := path.Base(r.URL.Path)
-    fn := fractal.Roots4
-    if base != "unity" {
-        n, err := strconv.Atoi(base)
-        if err != nil {
-            msg := fmt.Sprintf("%q is not convertible to integer", base)
-            http.Error(w, msg, 418)
-            return
-        }
-        fn = fractal.NewRootsUnity(n)
-    }
-    fractal.WritePNG(w, fn)
+	fn := fractal.Roots4
+	if base != "unity" {
+		n, err := strconv.Atoi(base)
+		if err != nil {
+			msg := fmt.Sprintf("%q is not convertible to integer", base)
+			http.Error(w, msg, 418)
+			return
+		}
+		fn = fractal.NewRootsUnity(n)
+	}
+	fractal.WritePNG(w, fn)
 }
 
 func newter(w http.ResponseWriter, r *http.Request) {
-    countme("newton", r)
-    coefs := strings.Fields(r.FormValue("coefs"))
-    poly := make(fractal.IPoly, len(coefs))
-    var err error
-    for i, coef := range coefs {
-        poly[i], err = strconv.Atoi(coef)
-        if err != nil {
-            msg := fmt.Sprintf("%q is not convertible to integer", coef)
-            http.Error(w, msg, 418)
-            return
-        }
-    }
-    fn := fractal.NewPolyFractal(poly)
-    fractal.WritePNG(w, fn)
+	countme("newton", r)
+	coefs := strings.Fields(r.FormValue("coefs"))
+	poly := make(fractal.IPoly, len(coefs))
+	var err error
+	for i, coef := range coefs {
+		poly[i], err = strconv.Atoi(coef)
+		if err != nil {
+			msg := fmt.Sprintf("%q is not convertible to integer", coef)
+			http.Error(w, msg, 418)
+			return
+		}
+	}
+	fn := fractal.NewPolyFractal(poly)
+	fractal.WritePNG(w, fn)
 }
-

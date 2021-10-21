@@ -29,8 +29,8 @@ var (
 	res     = 0.002 // angular resolution
 	size    = 200   // image canvas covers [-size..+size]
 	nframes = 64
-	delay   = 8     // delay between frames, centiseconds
-    shift   = 0.1   // phase shift per frame
+	delay   = 8   // delay between frames, centiseconds
+	shift   = 0.1 // phase shift per frame
 )
 
 func ParseArgs(args []string) error {
@@ -57,7 +57,7 @@ func ParseArgs(args []string) error {
 		nframes, err = strconv.Atoi(args[3])
 		if err != nil {
 			return fmt.Errorf("Fourth argument %q (number of frames) not convertible to int: %v", args[3], err)
-	}
+		}
 	}
 	if len(args) > 4 {
 		delay, err = strconv.Atoi(args[4])
@@ -65,16 +65,16 @@ func ParseArgs(args []string) error {
 			return fmt.Errorf("Fifth argument %q (delay between frames in centiseconds) not convertible to int: %v", args[4], err)
 		}
 	}
-    if len(args) > 5 {
-        shift, err = strconv.ParseFloat(args[5], 64)
-        if err != nil {
-            return fmt.Errorf("Sixth argument %q (phase shift between frames) not convertible to float: %v", args[5], err)
-        }
-    }
+	if len(args) > 5 {
+		shift, err = strconv.ParseFloat(args[5], 64)
+		if err != nil {
+			return fmt.Errorf("Sixth argument %q (phase shift between frames) not convertible to float: %v", args[5], err)
+		}
+	}
 	if len(args) > 6 {
 		return fmt.Errorf("Too many arguments!")
 	}
-    return nil
+	return nil
 }
 
 func ParseMap(params map[string]string) {

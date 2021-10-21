@@ -3,7 +3,7 @@ package surface
 
 import (
 	"fmt"
-    "io"
+	"io"
 	"math"
 )
 
@@ -64,5 +64,5 @@ func Eggbox(x, y float64) float64 {
 }
 
 func Saddle(x, y float64) float64 {
-    return (x*x - y*y) / 240
+	return (x*x - y*y) / 240
 }
