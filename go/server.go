@@ -20,7 +20,8 @@ import (
 var mu sync.Mutex
 var counts map[string]int
 
-const thresh = 0.000001 // for funcs fed to bc; don't let x < thresh (avoids divide by 0)
+const thresh = 0.000001 // for expressions fed to bc; clamp |x| >= thresh.
+// This avoids dividing by zero (also in terms of r) which hangs the bc interaction.
 
 func main() {
 	counts = make(map[string]int)
