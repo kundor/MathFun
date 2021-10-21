@@ -160,8 +160,8 @@ func surfer(w http.ResponseWriter, r *http.Request) {
 		surfunc = surface.Saddle
 	}
 	expr := r.FormValue("func")
-	log.Printf("Requested func %s\n", expr)
 	if expr != "" {
+		log.Printf("Requested func %s\n", expr)
 		cmd := exec.Command("bc", "-ql")
 		stdin, _ := cmd.StdinPipe()
 		stdout, _ := cmd.StdoutPipe()
