@@ -37,6 +37,18 @@ func main() {
 	log.Fatal(http.ListenAndServe(":8000", nil))
 }
 
+var err418 = `<html>
+  <head>
+    <title>Error 418</title>
+  </head>
+  <body>
+    <h1>Error 418: I'm a teapot</h1>
+    <p>Just as a teapot cannot brew if you give it coffee beans,
+    I cannot convert to %T given %q.</p>
+    <p>%v</p>
+  </body>
+</html>`
+
 func countme(name string, r *http.Request) {
 	log.Printf("request for %q", r.URL.Path)
 	mu.Lock()
@@ -199,7 +211,7 @@ func uniter(w http.ResponseWriter, r *http.Request) {
 	if base != "unity" {
 		n, err := strconv.Atoi(base)
 		if err != nil {
-			msg := fmt.Sprintf("%q is not convertible to integer", base)
+			msg := fmt.Sprintf(err418, n, base, err)
 			http.Error(w, msg, 418)
 			return
 		}
@@ -216,7 +228,7 @@ func newter(w http.ResponseWriter, r *http.Request) {
 	for i, coef := range coefs {
 		poly[i], err = strconv.Atoi(coef)
 		if err != nil {
-			msg := fmt.Sprintf("%q is not convertible to integer", coef)
+			msg := fmt.Sprintf(err418, poly[i], coef, err)
 			http.Error(w, msg, 418)
 			return
 		}
