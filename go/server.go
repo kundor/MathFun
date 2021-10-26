@@ -49,6 +49,12 @@ var err418 = `<html>
   </body>
 </html>`
 
+func send418(w http.ResponseWriter, msg string) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	w.WriteHeader(418)
+	fmt.Fprintln(w, msg)
+}
+
 func countme(name string, r *http.Request) {
 	log.Printf("request for %q", r.URL.Path)
 	mu.Lock()
@@ -212,7 +218,7 @@ func uniter(w http.ResponseWriter, r *http.Request) {
 		n, err := strconv.Atoi(base)
 		if err != nil {
 			msg := fmt.Sprintf(err418, n, base, err)
-			http.Error(w, msg, 418)
+			send418(w, msg)
 			return
 		}
 		fn = fractal.NewRootsUnity(n)
@@ -229,7 +235,7 @@ func newter(w http.ResponseWriter, r *http.Request) {
 		poly[i], err = strconv.Atoi(coef)
 		if err != nil {
 			msg := fmt.Sprintf(err418, poly[i], coef, err)
-			http.Error(w, msg, 418)
+			send418(w, msg)
 			return
 		}
 	}
