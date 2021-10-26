@@ -47,50 +47,50 @@ func countme(name string, r *http.Request) {
 func index(w http.ResponseWriter, r *http.Request) {
 	countme("index", r)
 	fmt.Fprintf(w, `<html>
-    <head>
+  <head>
     <title>GO SERVER GO</title>
-    </head>
-    <body>
+  </head>
+  <body>
     <ul>
-    <li><a href="/echo">echo</a></li>
-    <li><a href="/count">count</a></li>
-    <li><a href="/lissajous">lissajous</a>
-    <form action="/lissajous/" method="POST">
-    <ul>
-    <li><label for="cycles">Number of oscillator revolutions:</label><input type="number" step="any" value=5 id="cycles" name="cycles"></li>
-    <li><label for="res">Angular resolution:</label><input type="number" step="any" value=0.002 id="res" name="res"></li>
-    <li><label for="size">Half canvas size (pixels):</label><input type="number" value=200 id="size" name="size"></li>
-    <li><label for="nframes">Number of frames:</label><input type="number" value=64 id="nframes" name="nframes"></li>
-    <li><label for="delay">Delay between frames (centiseconds):</label><input type="number" value=8 id="delay" name="delay"></li>
-    <li><label for="shift">Phase shift per frame:</label><input type="number" step="any" value="0.1" id="shift" name="shift"></li>
+      <li><a href="/echo">echo</a></li>
+      <li><a href="/count">count</a></li>
+      <li><a href="/lissajous">lissajous</a>
+      <form action="/lissajous/" method="POST">
+      <ul>
+        <li><label for="cycles">Number of oscillator revolutions:</label><input type="number" step="any" value=5 id="cycles" name="cycles"></li>
+        <li><label for="res">Angular resolution:</label><input type="number" step="any" value=0.002 id="res" name="res"></li>
+        <li><label for="size">Half canvas size (pixels):</label><input type="number" value=200 id="size" name="size"></li>
+        <li><label for="nframes">Number of frames:</label><input type="number" value=64 id="nframes" name="nframes"></li>
+        <li><label for="delay">Delay between frames (centiseconds):</label><input type="number" value=8 id="delay" name="delay"></li>
+        <li><label for="shift">Phase shift per frame:</label><input type="number" step="any" value="0.1" id="shift" name="shift"></li>
+      </ul>
+      <input type="submit">
+      </form></li>
+      <li><a href="/surface">surface</a> / <a href="surface/eggbox">Eggbox</a> <a href="surface/moguls">Moguls</a> <a href="surface/saddle">Saddle</a>
+      <form action="/surface">
+      <label for="func">Function for surface:</label><input type="text" name="func" id="func"><input type="submit">
+      </form>
+      <p>Note: <a href="https://www.gnu.org/software/bc/manual/html_mono/bc.html">bc syntax</a>.
+        x, y, r, t available (x + iy = r*e^it). s(x) = sin(x), l(x) = ln(x), etc.</p>
+      <p>For non-integer exponents 2^x enter e(x*l(2)).</p></li>
+      <li><a href="/mandelbrot">mandelbrot</a></li>
+      <li><a href="/unity">unity</a> / <a href="unity/2">2</a>
+                                       <a href="unity/3">3</a>
+                                       <a href="unity/4">4</a>
+                                       <a href="unity/5">5</a>
+                                       <a href="unity/6">6</a>
+                                       <a href="unity/7">7</a>...
+      </li>
+      <li><form action="newton">
+      <label for="coefs">Integer polynomial coefficients:</label><input type="text" name="coefs" id="coefs">
+      <input type="submit">
+      </form>
+      <p>Space-separated coefficients a0 a1 ... a_n representing a_0 + a1*z + ... + a_n*z^n.</p>
+      <p>Try "-1 0 0 0 0 1" (fifth roots of unity) or "2 -2 0 1".</p>
+      </li>
     </ul>
-    <input type="submit">
-    </form></li>
-    <li><a href="/surface">surface</a> / <a href="surface/eggbox">Eggbox</a> <a href="surface/moguls">Moguls</a> <a href="surface/saddle">Saddle</a>
-    <form action="/surface">
-    <label for="func">Function for surface:</label><input type="text" name="func" id="func"><input type="submit">
-    </form>
-    <p>Note: <a href="https://www.gnu.org/software/bc/manual/html_mono/bc.html">bc syntax</a>.
-    x, y, r, t available (x + iy = r*e^it). s(x) = sin(x), l(x) = ln(x), etc.</p>
-    <p>For non-integer exponents 2^x enter e(x*l(2)).</p></li>
-    <li><a href="/mandelbrot">mandelbrot</a></li>
-    <li><a href="/unity">unity</a> / <a href="unity/2">2</a>
-                                     <a href="unity/3">3</a>
-                                     <a href="unity/4">4</a>
-                                     <a href="unity/5">5</a>
-                                     <a href="unity/6">6</a>
-                                     <a href="unity/7">7</a>...
-    </li>
-    <li><form action="newton">
-    <label for="coefs">Integer polynomial coefficients:</label><input type="text" name="coefs" id="coefs">
-    <input type="submit">
-    </form>
-    <p>Space-separated coefficients a0 a1 ... a_n representing a_0 + a1*z + ... + a_n*z^n.</p>
-    <p>Try "-1 0 0 0 0 1" (fifth roots of unity) or "2 -2 0 1".</p>
-    </li>
-    </ul>
-    </body>
-    </html>`)
+  </body>
+</html>`)
 }
 
 //echoer echoes HTTP request.
