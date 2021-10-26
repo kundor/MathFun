@@ -38,37 +38,37 @@ func ParseArgs(args []string) error {
 	if len(args) > 0 {
 		cycles, err = strconv.ParseFloat(args[0], 64)
 		if err != nil {
-			return fmt.Errorf("First argument %q (number of oscillator revolutions) not convertible to float: %v", args[0], err)
+			return fmt.Errorf("First argument (number of oscillator revolutions) not convertible to float: %v", err)
 		}
 	}
 	if len(args) > 1 {
 		res, err = strconv.ParseFloat(args[1], 64)
 		if err != nil {
-			return fmt.Errorf("Second argument %q (angular resolution) not convertible to float: %v", args[1], err)
+			return fmt.Errorf("Second argument (angular resolution) not convertible to float: %v", err)
 		}
 	}
 	if len(args) > 2 {
 		size, err = strconv.Atoi(args[2])
 		if err != nil {
-			return fmt.Errorf("Third argument %q (canvas size) not convertible to int: %v", args[2], err)
+			return fmt.Errorf("Third argument (canvas size) not convertible to int: %v", err)
 		}
 	}
 	if len(args) > 3 {
 		nframes, err = strconv.Atoi(args[3])
 		if err != nil {
-			return fmt.Errorf("Fourth argument %q (number of frames) not convertible to int: %v", args[3], err)
+			return fmt.Errorf("Fourth argument (number of frames) not convertible to int: %v", err)
 		}
 	}
 	if len(args) > 4 {
 		delay, err = strconv.Atoi(args[4])
 		if err != nil {
-			return fmt.Errorf("Fifth argument %q (delay between frames in centiseconds) not convertible to int: %v", args[4], err)
+			return fmt.Errorf("Fifth argument (delay between frames in centiseconds) not convertible to int: %v", err)
 		}
 	}
 	if len(args) > 5 {
 		shift, err = strconv.ParseFloat(args[5], 64)
 		if err != nil {
-			return fmt.Errorf("Sixth argument %q (phase shift between frames) not convertible to float: %v", args[5], err)
+			return fmt.Errorf("Sixth argument (phase shift between frames) not convertible to float: %v", err)
 		}
 	}
 	if len(args) > 6 {
