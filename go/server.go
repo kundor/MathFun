@@ -3,6 +3,7 @@ package main
 
 import (
 	"fmt"
+	"html"
 	"log"
 	"math"
 	"net/http"
@@ -49,9 +50,10 @@ var err418 = `<html>
   </body>
 </html>`
 
-func send418(w http.ResponseWriter, msg string) {
+func send418(w http.ResponseWriter, val interface{}, input string, err error) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	w.WriteHeader(418)
+	msg := fmt.Sprintf(err418, val, html.EscapeString(input), html.EscapeString(err.Error()))
 	fmt.Fprintln(w, msg)
 }
 
@@ -217,8 +219,7 @@ func uniter(w http.ResponseWriter, r *http.Request) {
 	if base != "unity" {
 		n, err := strconv.Atoi(base)
 		if err != nil {
-			msg := fmt.Sprintf(err418, n, base, err)
-			send418(w, msg)
+			send418(w, n, base, err)
 			return
 		}
 		fn = fractal.NewRootsUnity(n)
@@ -234,8 +235,7 @@ func newter(w http.ResponseWriter, r *http.Request) {
 	for i, coef := range coefs {
 		poly[i], err = strconv.Atoi(coef)
 		if err != nil {
-			msg := fmt.Sprintf(err418, poly[i], coef, err)
-			send418(w, msg)
+			send418(w, poly[i], coef, err)
 			return
 		}
 	}
