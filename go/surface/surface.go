@@ -25,7 +25,8 @@ func WriteSVG(w io.Writer, f surfunc) {
 		"style='stroke: grey; fill: white; stroke-width: 0.7' "+
 		"width='%d' height='%d'>", width, height)
 	for i := 0; i < cells; i++ {
-		for j := 0; j < cells; j++ {
+        // Only do every other cell (checkerboard pattern; i+j has odd parity.)
+		for j := (i % 2) + 1; j < cells; j+=2 {
 			ax, ay := corner(i+1, j, f)
 			bx, by := corner(i, j, f)
 			cx, cy := corner(i, j+1, f)
