@@ -7,3 +7,5 @@ This is safe (https://stackoverflow.com/questions/49879322/can-i-concurrently-wr
 However, it's not safe with the arbitrary integer polynomial fractal functions returned by
 NewPolyFractal(coefs). Those tracks the polynomial roots as they are found in a slice `roots`
 wrapped in the closure. Having different goroutines calling roots = append(roots, z) is a race.
+
+A mutex lock was added around checking the roots, which will reduce the benefits of parallelization.

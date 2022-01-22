@@ -141,6 +141,7 @@ func (coefs IPoly) differentiate() IPoly {
 
 func NewPolyFractal(coefs IPoly) colorfunc {
 	const iterations = 200
+	var mu sync.Mutex
 	roots := make([]complex128, 0, len(coefs))
 	df := coefs.differentiate()
 	return func(z complex128) color.Color {
@@ -149,13 +150,16 @@ func NewPolyFractal(coefs IPoly) colorfunc {
 			dif := cmplx.Abs(newz - z)
 			z = newz
 			if dif < thresh {
+				mu.Lock()
 				for i, root := range roots {
 					if cmplx.Abs(z-root) < thresh {
+						mu.Unlock()
 						return thecolor(i, iter)
 					}
 				}
 				// no nearby root already in roots
 				roots = append(roots, z)
+				mu.Unlock()
 				return thecolor(len(roots)-1, iter)
 			}
 		}
