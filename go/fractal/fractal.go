@@ -1,4 +1,4 @@
-//Fractal creates PNG images of Mandelbrot or Newton factorials.
+//Fractal creates PNG images of Mandelbrot or Newton fractals.
 package fractal
 
 import (
