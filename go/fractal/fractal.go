@@ -9,11 +9,13 @@ import (
 	"log"
 	"math"
 	"math/cmplx"
+	"sync"
 )
 
 const (
 	xmin, ymin, xmax, ymax = -2, -2, +2, +2
 	width, height          = 1024, 1024
+	numproc                = 4
 )
 
 const thresh = 0.0001
@@ -22,14 +24,22 @@ type colorfunc func(complex128) color.Color
 
 func WritePNG(w io.Writer, f colorfunc) {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	for py := 0; py < height; py++ {
-		y := float64(py)/height*(ymax-ymin) + ymin
-		for px := 0; px < width; px++ {
-			x := float64(px)/width*(xmax-xmin) + xmin
-			z := complex(x, y)
-			img.Set(px, py, f(z))
-		}
+	var wg sync.WaitGroup
+	wg.Add(numproc)
+	for i := 0; i < numproc; i++ {
+		go func(id int) {
+			defer wg.Done()
+			for py := id; py < height; py += numproc {
+				y := float64(py)/height*(ymax-ymin) + ymin
+				for px := 0; px < width; px++ {
+					x := float64(px)/width*(xmax-xmin) + xmin
+					z := complex(x, y)
+					img.Set(px, py, f(z))
+				}
+			}
+		}(i)
 	}
+	wg.Wait()
 	png.Encode(w, img)
 }
 
