@@ -325,6 +325,16 @@ def contractions(G, l, j):
         sections.append(X)
     return sections
 
+def colored_simple_graph(G):
+    """A simple graph with colors encoding the ranks of all edges between vertices"""
+    edgecolors = {}
+    for e in G.es:
+        if e.source == e.target:
+            continue
+        a, b = min(e.tuple), max(e.tuple)
+        edgecolors[a,b] = edgecolors.get((a,b), 0) + 2**e["rank"]
+    return igraph.Graph(edges=edgecolors.keys(), edge_attrs={"color": list(edgecolors.values())})
+
 def underlying_simple_graph(G):
     edges = {(min(e.tuple),max(e.tuple)) for e in G.es if e.source != e.target}
     return igraph.Graph(G.vcount(), edges)
