@@ -182,7 +182,9 @@ def isomorphicorbits(G, K):
     """Are G and K isomorphic (respecting edge ranks)?"""
     if G.ecount() != K.ecount():
         return False
-    return G.isomorphic_vf2(K, edge_color1=G.es['rank'], edge_color2=K.es['rank']) 
+    SG = colored_simple_graph(G)
+    SK = colored_simple_graph(K)
+    return SG.isomorphic_vf2(SK, edge_color1=SG.es['color'], edge_color2=SK.es['color'])
 
 def covers(G, K):
     """Does G cover K as an orbit graph? (Thesis, II.5)"""
